@@ -12,7 +12,8 @@ import org.apache.ibatis.jdbc.Null;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * <p>
  * 服务实现类
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpSession;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+
+  private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
   @Override
   public Result sendCode(String phone, HttpSession session) {
@@ -39,7 +42,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     session.setAttribute("code", code);
 
     //4.send the code to the phone number
-    log.debug("send code succssfully, code: {}");
+    log.debug("发送短信验证码成功，验证码：{}", code);
 
     return Result.ok();
 
@@ -70,14 +73,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
       user = createUserWithPhone(phone);
     }
     session.setAttribute("user", user);
-    return null;
+    return Result.ok();
   }
 
   private User createUserWithPhone(String phone) {
     // create a new user with the phone number
     User user = new User();
     user.setPhone(phone);
-    user.setNickName("user_" + RandomUtil.randomString(10));
+    user.setNickName("USER_NICK_NAME_PREFIX" + RandomUtil.randomString(10));
     return null;
   }
 }
